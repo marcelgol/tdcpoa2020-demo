@@ -11,7 +11,7 @@ resources:
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '775963a0-17ae-46d1-8e6b-d8814408039e'
-  imageRepository: 'lab'
+  imageRepository: 'demo'
   containerRegistry: 'tdcpoa2020demo.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Temperature.Converter.API/Dockerfile'
   tag: '$(Build.BuildId)'
