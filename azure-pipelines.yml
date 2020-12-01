@@ -107,3 +107,8 @@ stages:
         azureSubscription: 'Visual Studio Enterprise Subscription(249a316d-fc9d-4e07-bf47-4ab48ab2cb23)'
         Action: 'Start Azure App Service'
         WebAppName: 'tdcpoa2020-demo-dockerapp'
+    
+    - task: WhiteSource Bolt@20
+      displayName: "Run WhiteSource Scan"
+      inputs:
+        cwd: '.'
