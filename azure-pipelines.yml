@@ -29,6 +29,13 @@ stages:
       vmImage: $(vmImageName)
     steps:
     
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: 'Sonar'
+        organization: 'marcelgol'
+        scannerMode: 'MSBuild'
+        projectKey: 'marcelgol_tdcpoa2020-demo'
+   
     - task: DotNetCoreCLI@2
       displayName: "Dotnet Restore"
       inputs:
@@ -47,6 +54,12 @@ stages:
         command: 'test'
         projects: './Temperature.Converter.Tests'
 
+    - task: SonarCloudAnalyze@1
+
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
+        
     - task: DotNetCoreCLI@2
       displayName: "Dotnet Publish"
       inputs:
