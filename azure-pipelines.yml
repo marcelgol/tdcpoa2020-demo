@@ -21,7 +21,7 @@ variables:
 
 stages:
 - stage: Build
-  displayName: Build and push stage
+  displayName: From Restore to Deploy
   jobs:  
   - job: Build
     displayName: Build
@@ -30,17 +30,25 @@ stages:
     steps:
     
     - task: DotNetCoreCLI@2
+      displayName: "Dotnet Restore"
       inputs:
         command: 'restore'
         projects: '.'
         feedsToUse: 'select'
     
     - task: DotNetCoreCLI@2
+      displayName: "Dotnet Build"
       inputs:
         command: 'build'
         projects: '.'
+    
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: './Temperature.Converter.Tests'
 
     - task: DotNetCoreCLI@2
+      displayName: "Dotnet Publish"
       inputs:
         command: 'publish'
         publishWebProjects: false
@@ -50,7 +58,7 @@ stages:
         modifyOutputPath: false
         
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: "Docker Build and Push"
       inputs:
         command: buildAndPush
         repository: $(imageRepository)
@@ -60,6 +68,7 @@ stages:
           $(tag)
     
     - task: AzureRmWebAppDeployment@4
+      displayName: "Deploy to WebApp"      
       inputs:
         ConnectionType: 'AzureRM'
         azureSubscription: 'Visual Studio Enterprise Subscription(249a316d-fc9d-4e07-bf47-4ab48ab2cb23)'
@@ -70,12 +79,14 @@ stages:
         DockerImageTag: $(tag)
     
     - task: AzureAppServiceManage@0
+      displayName: "Stop WebApp"
       inputs:
         azureSubscription: 'Visual Studio Enterprise Subscription(249a316d-fc9d-4e07-bf47-4ab48ab2cb23)'
         Action: 'Stop Azure App Service'
         WebAppName: 'tdcpoa2020-demo-dockerapp'
     
     - task: AzureAppServiceManage@0
+      displayName: "Start WebApp"
       inputs:
         azureSubscription: 'Visual Studio Enterprise Subscription(249a316d-fc9d-4e07-bf47-4ab48ab2cb23)'
         Action: 'Start Azure App Service'
